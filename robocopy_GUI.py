@@ -53,7 +53,8 @@ destination_button = tk.Button(window, text="Select Folder", command=select_dest
 destination_button.grid(row=0, column=6)
 
 folder_list = tk.Listbox(window)
-folder_list.grid(row=3, columnspan=7)
+folder_list.grid(row=2, columnspan=7, sticky="ew")  # Set sticky="ew" to make the list wider
+folder_list.configure(height=len(source_folders)) # Configure the listbox to adjust its height based on the number of entries
 
 def add_folder_to_backup():
     source_folder = source_entry.get()
@@ -74,7 +75,7 @@ add_button.grid(row=1, columnspan=4)
 
 # start button
 start_button = tk.Button(window, text="Start Backup", command=start_robocopy)
-start_button.grid(row=2, columnspan=4)
+start_button.grid(row=3, columnspan=4)
 
 # Start the GUI event loop
 window.mainloop()
