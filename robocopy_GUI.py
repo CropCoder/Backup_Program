@@ -22,6 +22,8 @@ def add_folder_to_backup():
     if source_folder and destination_folder:
         if (source_folder, destination_folder) in zip(source_folders, destination_folders):
             tk.messagebox.showwarning("Warning", "This path-pair has already been entered.")
+        elif source_folder == destination_folder:
+            tk.messagebox.showwarning("Warning", "Source and destination folders cannot be the same.")
         else:
             source_folders.append(source_folder)
             destination_folders.append(destination_folder)
@@ -40,7 +42,6 @@ def remove_folder_from_backup():
         folder_list.delete(selected_index)
 
 def start_robocopy(flags=''):
-
     # Check if there are any entries in the source and destination entry boxes
     if source_entry.get() or destination_entry.get():
         tk.messagebox.showwarning("Warning", "Please add all folder pairs to backup before starting the backup.")
@@ -58,43 +59,69 @@ def start_robocopy(flags=''):
         subprocess.run(['robocopy', source, destination, *robocopy_flags])
 
 def start_backup():
-    start_robocopy()
+    if hard_copy_var.get()== 1:
+        start_robocopy()
 
 # Create the main window
-window = tk.Tk()
-window.title("Robocopy GUI")
+window = tk.Tk() # Create the main window
+window.title("An Easy Backup Program") # Change the title of the GUI
+window.iconbitmap('D:\Projects\Github\Repos\Backup_Prgramm\icon.ico') # Change the icon of the GUI
+window.resizable(0, 0)  # Disable resizing the GUI
+
+
+# Create a frame for the robocopy feature
+robocopy_frame = tk.Frame(window, bd=2, relief=tk.GROOVE)
+robocopy_frame.grid(row=1, column=0, columnspan=7, sticky="ew")
+
+# Create a check button for enabling the robocopy feature
+hard_copy_var = tk.IntVar()
+hard_copy_var.set(1)  # Set the initial value to 1
+hard_copy_checkbox = tk.Checkbutton(robocopy_frame, text="Hard Copy", variable=hard_copy_var)
+hard_copy_checkbox.grid(row=0, column=0, sticky="w")
+
 
 # source folder selection
-source_label = tk.Label(window, text="Source Folder:")
-source_label.grid(row=0, column=0, sticky="e")
-source_entry = tk.Entry(window)
-source_entry.grid(row=0, column=1)
-source_button = tk.Button(window, text="Select Folder", command=select_source_folder)
-source_button.grid(row=0, column=2)
+source_label = tk.Label(robocopy_frame, text="Source Folder:")
+source_label.grid(row=1, column=0, sticky="e")
+source_entry = tk.Entry(robocopy_frame)
+source_entry.grid(row=1, column=1)
+source_button = tk.Button(robocopy_frame, text="Select Folder", command=select_source_folder)
+source_button.grid(row=1, column=2)
 
 # destination folder selection
-destination_label = tk.Label(window, text="Destination Folder:")
-destination_label.grid(row=0, column=4, sticky="e")
-destination_entry = tk.Entry(window)
-destination_entry.grid(row=0, column=5)
-destination_button = tk.Button(window, text="Select Folder", command=select_destination_folder)
-destination_button.grid(row=0, column=6)
+destination_label = tk.Label(robocopy_frame, text="Destination Folder:")
+destination_label.grid(row=1, column=3, sticky="e")
+destination_entry = tk.Entry(robocopy_frame)
+destination_entry.grid(row=1, column=4)
+destination_button = tk.Button(robocopy_frame, text="Select Folder", command=select_destination_folder)
+destination_button.grid(row=1, column=5)
 
-folder_list = tk.Listbox(window)
+folder_list = tk.Listbox(robocopy_frame)
 folder_list.grid(row=3, columnspan=7, sticky="ew")  # Set sticky="ew" to make the list wider
 folder_list.configure(height=len(source_folders)) # Configure the listbox to adjust its height based on the number of entries
 
 # remove folder from backup button
-remove_button = tk.Button(window, text="Remove", command=remove_folder_from_backup)
+remove_button = tk.Button(robocopy_frame, text="Remove", command=remove_folder_from_backup)
 remove_button.grid(row=3, column=7)
 
 # add folder to backup button
-add_button = tk.Button(window, text="Add Folder-Pair to Backup", command=add_folder_to_backup)
+add_button = tk.Button(robocopy_frame, text="Add Folder-Pair to Backup", command=add_folder_to_backup)
 add_button.grid(row=2, column=2, columnspan=3)
 
 # start button
 start_button = tk.Button(window, text="Start Backup", command=start_backup, fg="red")
 start_button.grid(row=4, column=2, columnspan=3)
+
+# Create a function to change the font color of the robocopy frame based on the value of the check button
+def apply_font_color():
+    if hard_copy_var.get() == 0:
+        robocopy_frame.configure(highlightbackground="red", highlightthickness=1)
+    else:
+        robocopy_frame.configure(highlightbackground="green", highlightthickness=1)
+
+apply_font_color() # Call the function to apply the initial font color
+
+hard_copy_var.trace("w", lambda *args: apply_font_color()) # Apply the function whenever the check button is clicked
 
 # Start the GUI event loop
 window.mainloop()
