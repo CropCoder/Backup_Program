@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog
 import subprocess
+import string
+import os
 
 source_folders = []
 destination_folders = []
@@ -68,6 +70,9 @@ def start_backup():
     if choco_update_var.get() == 1:
         subprocess.run(["powershell", "-Command", "choco upgrade all -y"], check=True)
 
+    if windows_image_var.get() == 1:
+        create_windows_image()
+
 
 # Create the main window
 window = tk.Tk() # Create the main window
@@ -116,7 +121,7 @@ add_button.grid(row=2, column=2, columnspan=3)
 
 # start button
 start_button = tk.Button(window, text="Start Backup", command=start_backup, fg="red")
-start_button.grid(row=7, column=2, columnspan=3)
+start_button.grid(row=9, column=2, columnspan=3)
 
 # Create a function to change the font color of the robocopy frame based on the value of the check button
 def apply_font_color():
@@ -175,6 +180,73 @@ apply_choco_update_color()  # Call the function to apply the initial color
 choco_update_var.trace("w", lambda *args: apply_choco_update_color())  # Apply the function whenever the check button is clicked
 
 
+##################### GUI for Windows Image #####################
+
+# Create a frame for the Windows Image feature
+windows_image_frame = tk.Frame(window, bd=2, relief=tk.GROOVE)
+windows_image_frame.grid(row=7, column=0, columnspan=7, sticky="ew", padx=10)
+
+# Create a label for the source column
+source_label = tk.Label(windows_image_frame, text="Source Drives")
+source_label.grid(row=1, column=0, sticky="w")
+
+# Create a label for the destination column
+destination_label = tk.Label(windows_image_frame, text="Destination Drive")
+destination_label.grid(row=1, column=1, sticky="w")
+
+# Create a dictionary to store the IntVar instances and the corresponding drive letters
+source_drive_vars = {}
+destination_drive_var = tk.StringVar(value="")  # Initialize to an empty string
+
+# Create a function to disable the checkbox for the destination drive in the source column
+def disable_source_drive(drive):
+    for source_drive, source_var in source_drive_vars.items():
+        if source_drive == drive:
+            source_var.set(0)
+            source_drive_vars[source_drive].set(0)
+
+# Create a check button for each available drive letter in the source column and a radio button in the destination column
+for i, letter in enumerate(string.ascii_uppercase, start=2):
+    drive = f"{letter}:\\"
+    if os.path.exists(drive):
+        source_var = tk.IntVar()
+        source_var.set(0)  # Set the initial value to 0
+        source_checkbox = tk.Checkbutton(windows_image_frame, text=drive, variable=source_var)
+        source_checkbox.grid(row=i, column=0, sticky="w")
+        source_drive_vars[drive] = source_var  # Store the IntVar instance and the drive letter in the dictionary
+
+        destination_radiobutton = tk.Radiobutton(windows_image_frame, text=drive, value=drive, variable=destination_drive_var, command=lambda drive=drive: disable_source_drive(drive))
+        destination_radiobutton.grid(row=i, column=1, sticky="w")
+
+
+# Create a check button for enabling the Windows Image feature
+windows_image_var = tk.IntVar()
+windows_image_var.set(0)  # Set the initial value to 0
+windows_image_checkbox = tk.Checkbutton(windows_image_frame, text="Windows Image", variable=windows_image_var)
+windows_image_checkbox.grid(row=0, column=0, sticky="w")
+
+# Create a function to change the color of the windows image frame based on the value of the check button
+def apply_windows_image_color():
+    if windows_image_var.get() == 0:
+        windows_image_frame.configure(highlightbackground="red", highlightthickness=1)
+    else:
+        windows_image_frame.configure(highlightbackground="green", highlightthickness=1)
+
+apply_windows_image_color()  # Call the function to apply the initial color
+windows_image_var.trace("w", lambda *args: apply_windows_image_color())  # Apply the function whenever the check button is clicked
+
+# Create a dictionary to store the IntVar instances and the corresponding drive letters
+drive_vars = {}
+
+# Create a function to create a Windows image
+def create_windows_image():
+    if windows_image_var.get() == 1:
+        for drive, var in drive_vars.items():
+            if var.get() == 1:
+                # Replace 'destination' with the destination for the Windows image
+                subprocess.run(["wbAdmin", "start", "backup", "-backupTarget:\\destination", "-include:" + drive, "-allCritical", "-quiet"], check=True)
+
+
 ################### General GUI Design ###################
 
 #insert space between the two frames
@@ -192,6 +264,9 @@ empty_label.grid(row=6)
 
 empty_label = tk.Label(window)
 empty_label.grid(row=8)
+
+empty_label = tk.Label(window)
+empty_label.grid(row=10)
 
 robocopy_frame.grid(row=1, column=0, columnspan=7, sticky="ew", padx=10) # Add some horizontal padding to the robocopy frame
 restore_point_frame.grid(row=3, column=0, columnspan=7, sticky="ew", padx=10) # Add some horizontal padding to the restore point frame
