@@ -22,8 +22,6 @@ def add_folder_to_backup():
     if source_folder and destination_folder:
         if (source_folder, destination_folder) in zip(source_folders, destination_folders):
             tk.messagebox.showwarning("Warning", "This path-pair has already been entered.")
-        elif source_folder == destination_folder:
-            tk.messagebox.showwarning("Warning", "Source and destination cannot be the same.")
         else:
             source_folders.append(source_folder)
             destination_folders.append(destination_folder)
@@ -32,6 +30,14 @@ def add_folder_to_backup():
             destination_entry.delete(0, tk.END)
     else:
         tk.messagebox.showwarning("Warning", "Please select both source and destination folders.")
+
+def remove_folder_from_backup():
+    selected_index = folder_list.curselection()
+    if selected_index:
+        selected_index = int(selected_index[0])
+        source_folders.pop(selected_index)
+        destination_folders.pop(selected_index)
+        folder_list.delete(selected_index)
 
 def start_robocopy(flags=''):
 
@@ -77,6 +83,10 @@ destination_button.grid(row=0, column=6)
 folder_list = tk.Listbox(window)
 folder_list.grid(row=3, columnspan=7, sticky="ew")  # Set sticky="ew" to make the list wider
 folder_list.configure(height=len(source_folders)) # Configure the listbox to adjust its height based on the number of entries
+
+# remove folder from backup button
+remove_button = tk.Button(window, text="Remove", command=remove_folder_from_backup)
+remove_button.grid(row=3, column=7)
 
 # add folder to backup button
 add_button = tk.Button(window, text="Add Folder-Pair to Backup", command=add_folder_to_backup)
