@@ -18,10 +18,20 @@ def select_destination_folder():
 def add_folder_to_backup():
     source_folder = source_entry.get()
     destination_folder = destination_entry.get()
-    source_folders.append(source_folder)
-    destination_folders.append(destination_folder)
-    source_entry.delete(0, tk.END)
-    destination_entry.delete(0, tk.END)
+    
+    if source_folder and destination_folder:
+        if (source_folder, destination_folder) in zip(source_folders, destination_folders):
+            tk.messagebox.showwarning("Warning", "This path-pair has already been entered.")
+        elif source_folder == destination_folder:
+            tk.messagebox.showwarning("Warning", "Source and destination cannot be the same.")
+        else:
+            source_folders.append(source_folder)
+            destination_folders.append(destination_folder)
+            folder_list.insert(tk.END, f"Source: {source_folder} --> Destination: {destination_folder}")
+            source_entry.delete(0, tk.END)
+            destination_entry.delete(0, tk.END)
+    else:
+        tk.messagebox.showwarning("Warning", "Please select both source and destination folders.")
 
 def start_robocopy(flags=''):
 
@@ -40,6 +50,9 @@ def start_robocopy(flags=''):
     
     for i, (source, destination) in enumerate(zip(source_folders, destination_folders)):
         subprocess.run(['robocopy', source, destination, *robocopy_flags])
+
+def start_backup():
+    start_robocopy()
 
 # Create the main window
 window = tk.Tk()
@@ -65,32 +78,12 @@ folder_list = tk.Listbox(window)
 folder_list.grid(row=3, columnspan=7, sticky="ew")  # Set sticky="ew" to make the list wider
 folder_list.configure(height=len(source_folders)) # Configure the listbox to adjust its height based on the number of entries
 
-def add_folder_to_backup():
-    source_folder = source_entry.get()
-    destination_folder = destination_entry.get()
-    
-    if source_folder and destination_folder:
-        if (source_folder, destination_folder) in zip(source_folders, destination_folders):
-            tk.messagebox.showwarning("Warning", "This path-pair has already been entered.")
-        else:
-            source_folders.append(source_folder)
-            destination_folders.append(destination_folder)
-            folder_list.insert(tk.END, f"Source: {source_folder} --> Destination: {destination_folder}")
-            source_entry.delete(0, tk.END)
-            destination_entry.delete(0, tk.END)
-    else:
-        tk.messagebox.showwarning("Warning", "Please select both source and destination folders.")
-
-# arrow
-arrow_label = tk.Label(window, text="  -->  ")
-arrow_label.grid(row=0, column=3, rowspan=2)
-
 # add folder to backup button
 add_button = tk.Button(window, text="Add Folder-Pair to Backup", command=add_folder_to_backup)
 add_button.grid(row=2, column=2, columnspan=3)
 
 # start button
-start_button = tk.Button(window, text="Start Backup", command=start_robocopy, fg="red")
+start_button = tk.Button(window, text="Start Backup", command=start_backup, fg="red")
 start_button.grid(row=4, column=2, columnspan=3)
 
 # Start the GUI event loop
