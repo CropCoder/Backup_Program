@@ -62,12 +62,14 @@ def start_backup():
     if hard_copy_var.get()== 1:
         start_robocopy()
 
+    if restore_point_var.get() == 1:
+        subprocess.run(["powershell", "-Command", "Checkpoint-Computer -Description 'Restore Point by Python Prgram' -RestorePointType 'MODIFY_SETTINGS'"], check=True)
+
 # Create the main window
 window = tk.Tk() # Create the main window
 window.title("An Easy Backup Program") # Change the title of the GUI
 window.iconbitmap('D:\Projects\Github\Repos\Backup_Prgramm\icon.ico') # Change the icon of the GUI
-window.resizable(0, 0)  # Disable resizing the GUI
-
+window.resizable(0, 0)  # Disable resizing the GUI window
 
 # Create a frame for the robocopy feature
 robocopy_frame = tk.Frame(window, bd=2, relief=tk.GROOVE)
@@ -110,7 +112,7 @@ add_button.grid(row=2, column=2, columnspan=3)
 
 # start button
 start_button = tk.Button(window, text="Start Backup", command=start_backup, fg="red")
-start_button.grid(row=4, column=2, columnspan=3)
+start_button.grid(row=5, column=2, columnspan=3)
 
 # Create a function to change the font color of the robocopy frame based on the value of the check button
 def apply_font_color():
@@ -122,6 +124,49 @@ def apply_font_color():
 apply_font_color() # Call the function to apply the initial font color
 
 hard_copy_var.trace("w", lambda *args: apply_font_color()) # Apply the function whenever the check button is clicked
+
+
+################### GUI for Windows Restore Point ###################
+
+# Create a frame for the Windows Restore Point feature
+restore_point_frame = tk.Frame(window, bd=2, relief=tk.GROOVE)
+restore_point_frame.grid(row=3, column=0, columnspan=7, sticky="ew")
+
+# Create a check button for enabling the Windows Restore Point feature
+restore_point_var = tk.IntVar()
+restore_point_var.set(0)  # Set the initial value to 0
+restore_point_checkbox = tk.Checkbutton(restore_point_frame, text="Windows Restore Point", variable=restore_point_var)
+restore_point_checkbox.grid(row=0, column=0, sticky="w")
+
+start_button.grid(row=5, column=2, columnspan=3) # Move the start button to row 4
+
+# Create a function to change the color of the restore point frame based on the value of the check button
+def apply_restore_point_color():
+    if restore_point_var.get() == 0:
+        restore_point_frame.configure(highlightbackground="red", highlightthickness=1)
+    else:
+        restore_point_frame.configure(highlightbackground="green", highlightthickness=1)
+apply_restore_point_color()  # Call the function to apply the initial color
+restore_point_var.trace("w", lambda *args: apply_restore_point_color())  # Apply the function whenever the check button is clicked
+
+
+################### General GUI Design ###################
+
+#insert space between the two frames
+empty_label = tk.Label(window)
+empty_label.grid(row=0)
+
+empty_label = tk.Label(window)
+empty_label.grid(row=2)
+
+empty_label = tk.Label(window)
+empty_label.grid(row=4)
+
+empty_label = tk.Label(window)
+empty_label.grid(row=6)
+
+robocopy_frame.grid(row=1, column=0, columnspan=7, sticky="ew", padx=10) # Add some horizontal padding to the robocopy frame
+restore_point_frame.grid(row=3, column=0, columnspan=7, sticky="ew", padx=10) # Add some horizontal padding to the restore point frame
 
 # Start the GUI event loop
 window.mainloop()
