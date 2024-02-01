@@ -65,6 +65,10 @@ def start_backup():
     if restore_point_var.get() == 1:
         subprocess.run(["powershell", "-Command", "Checkpoint-Computer -Description 'Restore Point by Python Prgram' -RestorePointType 'MODIFY_SETTINGS'"], check=True)
 
+    if choco_update_var.get() == 1:
+        subprocess.run(["powershell", "-Command", "choco upgrade all -y"], check=True)
+
+
 # Create the main window
 window = tk.Tk() # Create the main window
 window.title("An Easy Backup Program") # Change the title of the GUI
@@ -112,7 +116,7 @@ add_button.grid(row=2, column=2, columnspan=3)
 
 # start button
 start_button = tk.Button(window, text="Start Backup", command=start_backup, fg="red")
-start_button.grid(row=5, column=2, columnspan=3)
+start_button.grid(row=7, column=2, columnspan=3)
 
 # Create a function to change the font color of the robocopy frame based on the value of the check button
 def apply_font_color():
@@ -138,8 +142,6 @@ restore_point_var.set(0)  # Set the initial value to 0
 restore_point_checkbox = tk.Checkbutton(restore_point_frame, text="Windows Restore Point", variable=restore_point_var)
 restore_point_checkbox.grid(row=0, column=0, sticky="w")
 
-start_button.grid(row=5, column=2, columnspan=3) # Move the start button to row 4
-
 # Create a function to change the color of the restore point frame based on the value of the check button
 def apply_restore_point_color():
     if restore_point_var.get() == 0:
@@ -148,6 +150,29 @@ def apply_restore_point_color():
         restore_point_frame.configure(highlightbackground="green", highlightthickness=1)
 apply_restore_point_color()  # Call the function to apply the initial color
 restore_point_var.trace("w", lambda *args: apply_restore_point_color())  # Apply the function whenever the check button is clicked
+
+
+################ GUI for Choco Update All ################
+
+# Create a frame for the Choco Update All feature
+choco_update_frame = tk.Frame(window, bd=2, relief=tk.GROOVE)
+choco_update_frame.grid(row=5, column=0, columnspan=7, sticky="ew", padx=10)
+
+# Create a check button for enabling the Choco Update All feature
+choco_update_var = tk.IntVar()
+choco_update_var.set(0)  # Set the initial value to 0
+choco_update_checkbox = tk.Checkbutton(choco_update_frame, text="Choco Update All", variable=choco_update_var)
+choco_update_checkbox.grid(row=0, column=0, sticky="w")
+
+# Create a function to change the color of the choco update frame based on the value of the check button
+def apply_choco_update_color():
+    if choco_update_var.get() == 0:
+        choco_update_frame.configure(highlightbackground="red", highlightthickness=1)
+    else:
+        choco_update_frame.configure(highlightbackground="green", highlightthickness=1)
+
+apply_choco_update_color()  # Call the function to apply the initial color
+choco_update_var.trace("w", lambda *args: apply_choco_update_color())  # Apply the function whenever the check button is clicked
 
 
 ################### General GUI Design ###################
@@ -164,6 +189,9 @@ empty_label.grid(row=4)
 
 empty_label = tk.Label(window)
 empty_label.grid(row=6)
+
+empty_label = tk.Label(window)
+empty_label.grid(row=8)
 
 robocopy_frame.grid(row=1, column=0, columnspan=7, sticky="ew", padx=10) # Add some horizontal padding to the robocopy frame
 restore_point_frame.grid(row=3, column=0, columnspan=7, sticky="ew", padx=10) # Add some horizontal padding to the restore point frame
