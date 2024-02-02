@@ -119,10 +119,6 @@ remove_button.grid(row=3, column=7)
 add_button = tk.Button(robocopy_frame, text="Add Folder-Pair to Backup", command=add_folder_to_backup)
 add_button.grid(row=2, column=2, columnspan=3)
 
-# start button
-start_button = tk.Button(window, text="Start Backup", command=start_backup, fg="red")
-start_button.grid(row=9, column=2, columnspan=3)
-
 # Create a function to change the font color of the robocopy frame based on the value of the check button
 def apply_font_color():
     if hard_copy_var.get() == 0:
@@ -247,6 +243,52 @@ def create_windows_image():
                 subprocess.run(["wbAdmin", "start", "backup", "-backupTarget:\\destination", "-include:" + drive, "-allCritical", "-quiet"], check=True)
 
 
+################### GUI for Update Windows ###################
+
+# Create a frame for the Update Windows feature
+update_windows_frame = tk.Frame(window, bd=2, relief=tk.GROOVE)
+update_windows_frame.grid(row=9, column=0, columnspan=7, sticky="ew", padx=10)
+
+# Create a check button for enabling the Update Windows feature
+update_windows_var = tk.IntVar()
+update_windows_var.set(0)  # Set the initial value to 0
+update_windows_checkbox = tk.Checkbutton(update_windows_frame, text="Update Windows", variable=update_windows_var)
+update_windows_checkbox.grid(row=0, column=0, sticky="w")
+
+# Create a function to change the color of the update windows frame based on the value of the check button
+def apply_update_windows_color():
+    if update_windows_var.get() == 0:
+        update_windows_frame.configure(highlightbackground="red", highlightthickness=1)
+    else:
+        update_windows_frame.configure(highlightbackground="green", highlightthickness=1)
+
+apply_update_windows_color()  # Call the function to apply the initial color
+update_windows_var.trace("w", lambda *args: apply_update_windows_color())  # Apply the function whenever the check button is clicked
+
+
+################### GUI for Full Windows Defender Scan ###################
+
+# Create a frame for the Update Windows feature
+defender_scan_frame = tk.Frame(window, bd=2, relief=tk.GROOVE)
+defender_scan_frame.grid(row=11, column=0, columnspan=7, sticky="ew", padx=10)
+
+# Create a check button for enabling the Update Windows feature
+defender_scan_var = tk.IntVar()
+defender_scan_var.set(0)  # Set the initial value to 0
+defender_scan_checkbox = tk.Checkbutton(defender_scan_frame, text="Full Windows Defender Scan", variable=defender_scan_var)
+defender_scan_checkbox.grid(row=0, column=0, sticky="w")
+
+# Create a function to change the color of the update windows frame based on the value of the check button
+def apply_defender_scan_color():
+    if defender_scan_var.get() == 0:
+        defender_scan_frame.configure(highlightbackground="red", highlightthickness=1)
+    else:
+        defender_scan_frame.configure(highlightbackground="green", highlightthickness=1)
+
+apply_defender_scan_color()  # Call the function to apply the initial color
+defender_scan_var.trace("w", lambda *args: apply_defender_scan_color())  # Apply the function whenever the check button is clicked
+
+
 ################### General GUI Design ###################
 
 #insert space between the two frames
@@ -268,8 +310,18 @@ empty_label.grid(row=8)
 empty_label = tk.Label(window)
 empty_label.grid(row=10)
 
+empty_label = tk.Label(window)
+empty_label.grid(row=12)
+
+empty_label = tk.Label(window)
+empty_label.grid(row=10)
+
 robocopy_frame.grid(row=1, column=0, columnspan=7, sticky="ew", padx=10) # Add some horizontal padding to the robocopy frame
 restore_point_frame.grid(row=3, column=0, columnspan=7, sticky="ew", padx=10) # Add some horizontal padding to the restore point frame
+
+# start button
+start_button = tk.Button(window, text="Start Backup", command=start_backup, fg="red")
+start_button.grid(row=15, column=2, columnspan=3)
 
 # Start the GUI event loop
 window.mainloop()
