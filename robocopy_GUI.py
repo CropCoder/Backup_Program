@@ -62,6 +62,8 @@ def start_robocopy(flags=''):
     for i, (source, destination) in enumerate(zip(source_folders, destination_folders)):
         subprocess.run(['robocopy', source, destination, *robocopy_flags])
 
+
+################### back up main function ###################
 def start_backup():
     if hard_copy_var.get()== 1:
         if start_robocopy():
@@ -77,12 +79,15 @@ def start_backup():
         create_windows_image()
 
     if update_windows_var.get() == 1:
-        subprocess.run(["powershell", "-Command", "Import-Module PSWindowsUpdate"], check=True)
-        subprocess.run(["powershell", "-Command", "Get-WindowsUpdate -Install -AcceptAll -IgnoreReboot"], check=True)
+        subprocess.run(["powershell", "-Command", "Update-MpSignature"], check=True)
+        ##subprocess.run(["powershell", "-Command", "Import-Module PSWindowsUpdate"], check=True)
+        ##subprocess.run(["powershell", "-Command", "Get-WindowsUpdate -Install -AcceptAll -IgnoreReboot"], check=True)
 
     if defender_scan_var.get() == 1:
-        #add a function for the defender scan
-        return
+        print("Scanning for viruses. Please wait...")
+        subprocess.run(["powershell", "-Command", "Start-MpScan -ScanType FullScan"], check=True)
+        
+        # C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -Cancel
 
     perform_shutdown()
     
@@ -130,8 +135,8 @@ remove_button = tk.Button(robocopy_frame, text="Remove", command=remove_folder_f
 remove_button.grid(row=3, column=7)
 
 # add folder to backup button
-add_button = tk.Button(robocopy_frame, text="Add Folder-Pair to Backup", command=add_folder_to_backup)
-add_button.grid(row=2, column=2, columnspan=3)
+add_button = tk.Button(robocopy_frame, text="+", fg="green", font=("Arial", 17, "bold"), command=add_folder_to_backup)
+add_button.grid(row=2, column=3, columnspan=1)
 
 # Create a function to change the font color of the robocopy frame based on the value of the check button
 def apply_font_color():
@@ -266,7 +271,7 @@ update_windows_frame.grid(row=9, column=0, columnspan=7, sticky="ew", padx=10)
 # Create a check button for enabling the Update Windows feature
 update_windows_var = tk.IntVar()
 update_windows_var.set(0)  # Set the initial value to 0
-update_windows_checkbox = tk.Checkbutton(update_windows_frame, text="Update Windows", variable=update_windows_var)
+update_windows_checkbox = tk.Checkbutton(update_windows_frame, text="Update Windows and Windows Defender", variable=update_windows_var)
 update_windows_checkbox.grid(row=0, column=0, sticky="w")
 
 # Create a function to change the color of the update windows frame based on the value of the check button
