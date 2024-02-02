@@ -118,21 +118,25 @@ source_entry.grid(row=1, column=1)
 source_button = tk.Button(robocopy_frame, text="Select Folder", command=select_source_folder)
 source_button.grid(row=1, column=2)
 
+#arrow label
+destination_label = tk.Label(robocopy_frame, text="        -->       ")
+destination_label.grid(row=1, column=3, sticky="e")
+
 # destination folder selection
 destination_label = tk.Label(robocopy_frame, text="Destination Folder:")
-destination_label.grid(row=1, column=3, sticky="e")
+destination_label.grid(row=1, column=4, sticky="e")
 destination_entry = tk.Entry(robocopy_frame)
-destination_entry.grid(row=1, column=4)
+destination_entry.grid(row=1, column=5)
 destination_button = tk.Button(robocopy_frame, text="Select Folder", command=select_destination_folder)
-destination_button.grid(row=1, column=5)
+destination_button.grid(row=1, column=6)
 
 folder_list = tk.Listbox(robocopy_frame)
-folder_list.grid(row=3, columnspan=7, sticky="ew")  # Set sticky="ew" to make the list wider
+folder_list.grid(row=3, columnspan=6, sticky="ew")  # Set sticky="ew" to make the list wider
 folder_list.configure(height=len(source_folders)) # Configure the listbox to adjust its height based on the number of entries
 
 # remove folder from backup button
 remove_button = tk.Button(robocopy_frame, text="Remove", command=remove_folder_from_backup)
-remove_button.grid(row=3, column=7)
+remove_button.grid(row=3, column=6)
 
 # add folder to backup button
 add_button = tk.Button(robocopy_frame, text="+", fg="green", font=("Arial", 17, "bold"), command=add_folder_to_backup)
