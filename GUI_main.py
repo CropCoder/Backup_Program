@@ -79,18 +79,25 @@ def start_backup():
         create_windows_image()
 
     if update_windows_var.get() == 1:
-        subprocess.run(["powershell", "-Command", "Update-MpSignature"], check=True)
-        ##subprocess.run(["powershell", "-Command", "Import-Module PSWindowsUpdate"], check=True)
-        ##subprocess.run(["powershell", "-Command", "Get-WindowsUpdate -Install -AcceptAll -IgnoreReboot"], check=True)
+        #subprocess.run(["powershell", "-Command", "Update-MpSignature"], check=True)
+        subprocess.run(["powershell", "-Command", "Import-Module PSWindowsUpdate"], check=True)
+        subprocess.run(["powershell", "-Command", "Get-WindowsUpdate -Install -AcceptAll -IgnoreReboot"], check=True)
 
     if defender_scan_var.get() == 1:
         print("Scanning for viruses. Please wait...")
         subprocess.run(["powershell", "-Command", "Start-MpScan -ScanType FullScan"], check=True)
         
         # C:\Program Files\Windows Defender\MpCmdRun.exe" -Scan -Cancel
-
+        # subprocess.run(["powershell", "-Command", "Stop-MpScan"], check=True)
+    
     perform_shutdown()
     
+
+################### cancel function ###################
+def cancel():
+    print("Cancelling the backup. Please wait...")
+    subprocess.run(["C:\\Program Files\\Windows Defender\\MpCmdRun.exe", "-Scan", "-Cancel"], check=True) # Cancel the Windows Defender scan
+
 
 # Create the main window
 window = tk.Tk() # Create the main window
@@ -262,7 +269,6 @@ def create_windows_image():
     if windows_image_var.get() == 1:
         for drive, var in drive_vars.items():
             if var.get() == 1:
-                # Replace 'destination' with the destination for the Windows image
                 subprocess.run(["wbAdmin", "start", "backup", "-backupTarget:\\destination", "-include:" + drive, "-allCritical", "-quiet"], check=True)
 
 
@@ -384,8 +390,11 @@ robocopy_frame.grid(row=1, column=0, columnspan=7, sticky="ew", padx=10) # Add s
 restore_point_frame.grid(row=3, column=0, columnspan=7, sticky="ew", padx=10) # Add some horizontal padding to the restore point frame
 
 # start button
-start_button = tk.Button(window, text="Start Backup", command=start_backup, fg="red")
-start_button.grid(row=15, column=2, columnspan=3)
+start_button = tk.Button(window, text="Start Backup", command=start_backup)
+start_button.grid(row=15, column=2, columnspan=1)
+
+cancel_button = tk.Button(window, text="Cancel", command=cancel, fg="red")
+cancel_button.grid(row=15, column=3, columnspan=1)
 
 # Start the GUI event loop
 window.mainloop()
