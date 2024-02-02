@@ -4,6 +4,7 @@ import subprocess
 import string
 import os
 
+program_folder = os.path.dirname(os.path.abspath(__file__))
 
 source_folders = []
 destination_folders = []
@@ -89,7 +90,8 @@ def start_backup():
 # Create the main window
 window = tk.Tk() # Create the main window
 window.title("An Easy Backup Program") # Change the title of the GUI
-window.iconbitmap(r'D:\Projects\Github\Repos\Backup_Prgramm\icon.ico') # Change the icon of the GUI
+icon_path = os.path.join(program_folder, 'icon.ico') # Set the path to the icon file
+window.iconbitmap(icon_path)  # Change the icon of the GUI
 window.resizable(0, 0)  # Disable resizing the GUI window
 
 # Create a frame for the robocopy feature
