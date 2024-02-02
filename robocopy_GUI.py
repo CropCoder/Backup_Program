@@ -293,6 +293,28 @@ def apply_defender_scan_color():
 apply_defender_scan_color()  # Call the function to apply the initial color
 defender_scan_var.trace("w", lambda *args: apply_defender_scan_color())  # Apply the function whenever the check button is clicked
 
+################### GUI for what to do after the backup ###################
+# Create a frame for the "What to do after backup" feature
+shutdown_frame = tk.Frame(window, bd=2, relief=tk.GROOVE)
+shutdown_frame.grid(row=13, column=0, columnspan=7, sticky="ew", padx=10)
+shutdown_label = tk.Label(shutdown_frame, text="What to do after backup")
+shutdown_label.grid(row=0, column=0, sticky="w")
+
+# Create radio buttons for "Nothing (default)", "Restart (recommended)", "Shutdown", and "Lock"
+shutdown_option = tk.StringVar()
+shutdown_option.set("Nothing (default)")
+
+nothing_radio = tk.Radiobutton(shutdown_frame, text="Nothing (default)", variable=shutdown_option, value="Nothing (default)")
+nothing_radio.grid(row=1, column=0, sticky="w")
+
+restart_radio = tk.Radiobutton(shutdown_frame, text="Restart (recommended)", variable=shutdown_option, value="Restart (recommended)")
+restart_radio.grid(row=2, column=0, sticky="w")
+
+shutdown_radio = tk.Radiobutton(shutdown_frame, text="Shutdown", variable=shutdown_option, value="Shutdown")
+shutdown_radio.grid(row=3, column=0, sticky="w")
+
+lock_radio = tk.Radiobutton(shutdown_frame, text="Lock", variable=shutdown_option, value="Lock")
+lock_radio.grid(row=4, column=0, sticky="w")
 
 ################### General GUI Design ###################
 
@@ -319,7 +341,10 @@ empty_label = tk.Label(window)
 empty_label.grid(row=12)
 
 empty_label = tk.Label(window)
-empty_label.grid(row=10)
+empty_label.grid(row=14)
+
+empty_label = tk.Label(window)
+empty_label.grid(row=99)
 
 robocopy_frame.grid(row=1, column=0, columnspan=7, sticky="ew", padx=10) # Add some horizontal padding to the robocopy frame
 restore_point_frame.grid(row=3, column=0, columnspan=7, sticky="ew", padx=10) # Add some horizontal padding to the restore point frame

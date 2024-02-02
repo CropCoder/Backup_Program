@@ -5,7 +5,7 @@ example_frame.grid(row=11, column=0, columnspan=7, sticky="ew", padx=10)
 # Create a check button for enabling the Update Windows feature
 example_var = tk.IntVar()
 example_var.set(0)  # Set the initial value to 0
-example_checkbox = tk.Checkbutton(example_frame, text="Full Windows Defender Scan", variable=example_var)
+example_checkbox = tk.Checkbutton(example_frame, text="Example", variable=example_var)
 example_checkbox.grid(row=0, column=0, sticky="w")
 
 # Create a function to change the color of the update windows frame based on the value of the check button
