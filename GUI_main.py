@@ -97,7 +97,10 @@ def start_backup():
 def cancel():
     print("Cancelling the backup. Please wait...")
     subprocess.run(["C:\\Program Files\\Windows Defender\\MpCmdRun.exe", "-Scan", "-Cancel"], check=True) # Cancel the Windows Defender scan
-
+    subprocess.run(["taskkill", "/f", "/im", "robocopy.exe"], check=True) # Cancel all robocopy commands (works)
+    #subprocess.run(["wbadmin", "delete systemstatebackup", "-keepversions:0"], check=True) # Cancel image backups
+    #subprocess.run(["powershell", "-Command", "Stop-Service -Name wuauserv"], check=True) # Cancel Windows updates
+    subprocess.run(["choco", "upgrade", "-n"], check=True) # Cancel Chocolatey updates (work in progress)
 
 # Create the main window
 window = tk.Tk() # Create the main window
