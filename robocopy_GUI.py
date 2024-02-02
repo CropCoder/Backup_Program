@@ -79,6 +79,13 @@ def start_backup():
         subprocess.run(["powershell", "-Command", "Import-Module PSWindowsUpdate"], check=True)
         subprocess.run(["powershell", "-Command", "Get-WindowsUpdate -Install -AcceptAll -IgnoreReboot"], check=True)
 
+    if defender_scan_var.get() == 1:
+        #add a function for the defender scan
+        return
+
+    perform_shutdown()
+    
+
 # Create the main window
 window = tk.Tk() # Create the main window
 window.title("An Easy Backup Program") # Change the title of the GUI
@@ -315,6 +322,22 @@ shutdown_radio.grid(row=3, column=0, sticky="w")
 
 lock_radio = tk.Radiobutton(shutdown_frame, text="Lock", variable=shutdown_option, value="Lock")
 lock_radio.grid(row=4, column=0, sticky="w")
+
+
+def perform_shutdown(): # The function checks the value of the `shutdown_option` variable and performs the corresponding action.
+    selected_option = shutdown_option.get()
+
+    if selected_option == "Nothing (default)":
+        pass  # Do nothing
+
+    elif selected_option == "Restart (recommended)":
+        subprocess.run(["shutdown", "/r", "/t", "0"], shell=True)  # Restart the system
+
+    elif selected_option == "Shutdown":
+        subprocess.run(["shutdown", "/s", "/t", "0"], shell=True)  # Shutdown the system
+        
+    elif selected_option == "Lock":
+        subprocess.run(["rundll32.exe", "user32.dll,LockWorkStation"], shell=True)  # Lock the system
 
 ################### General GUI Design ###################
 
