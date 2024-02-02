@@ -4,6 +4,7 @@ import subprocess
 import string
 import os
 
+
 source_folders = []
 destination_folders = []
 
@@ -47,12 +48,12 @@ def start_robocopy(flags=''):
     # Check if there are any entries in the source and destination entry boxes
     if source_entry.get() or destination_entry.get():
         tk.messagebox.showwarning("Warning", "Please add all folder pairs to backup before starting the backup.")
-        return
+        return True # Return True to indicate that there was a warning
     
     # Check if there are any path-pairs in the source_folders and destination_folders lists
     if not source_folders or not destination_folders:
         tk.messagebox.showwarning("Warning", "Please add at least one folder pair to backup before starting the backup.")
-        return
+        return True # Return True to indicate that there was a warning
 
     robocopy_flags = ['/MIR']  # add flags here
     robocopy_flags.extend(flags.split())
@@ -62,7 +63,8 @@ def start_robocopy(flags=''):
 
 def start_backup():
     if hard_copy_var.get()== 1:
-        start_robocopy()
+        if start_robocopy():
+            return # Return the start_backup-function if there was a warning from the start_robocopy-function
 
     if restore_point_var.get() == 1:
         subprocess.run(["powershell", "-Command", "Checkpoint-Computer -Description 'Restore Point by Python Prgram' -RestorePointType 'MODIFY_SETTINGS'"], check=True)
@@ -73,11 +75,14 @@ def start_backup():
     if windows_image_var.get() == 1:
         create_windows_image()
 
+    if update_windows_var.get() == 1:
+        subprocess.run(["powershell", "-Command", "Import-Module PSWindowsUpdate"], check=True)
+        subprocess.run(["powershell", "-Command", "Get-WindowsUpdate -Install -AcceptAll -IgnoreReboot"], check=True)
 
 # Create the main window
 window = tk.Tk() # Create the main window
 window.title("An Easy Backup Program") # Change the title of the GUI
-window.iconbitmap('D:\Projects\Github\Repos\Backup_Prgramm\icon.ico') # Change the icon of the GUI
+window.iconbitmap(r'D:\Projects\Github\Repos\Backup_Prgramm\icon.ico') # Change the icon of the GUI
 window.resizable(0, 0)  # Disable resizing the GUI window
 
 # Create a frame for the robocopy feature
